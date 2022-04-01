@@ -10,6 +10,6 @@ contract Contatore is Initializable {
     }
 
     function increaseValue(uint256 _x) public {
-        x = x + _x
+        x = x + _x;
     }
 }
