@@ -9,30 +9,58 @@ import Contatore from "../artifacts/contracts/Contatore.sol/Contatore.json";
 
 export default function Home() {
   const [contract, setContract] = useState();
-
+  const [amount, setAmount] = useState();
   useEffect(() => onLoad(), []);
+
+  useEffect(() => console.log("Contract", contract), [contract]);
 
   const onLoad = () => {
     getContract();
   };
 
-  const getContract = async () => {
+  const getContract = () => {
     if (typeof window.ethereum === "undefined") return;
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
-    setContract(new ethers.Contract(contatoreAddress, Contatore.abi, signer));
-    console.log("Add Contract: ", contract)
+    const localContract = new ethers.Contract(
+      contatoreAddress,
+      Contatore.abi,
+      signer
+    );
+    setContract(localContract);
   };
 
   const onClick = async () => {
-    try{
-      let transaction = await contract.increaseValue();
+    try {
+      let transaction = await contract.increaseValue(1);
       await transaction.wait();
-      console.log("Increased!")
-    }catch(err){
-      console.log("Error:",err)
+      getX();
+      console.log("Increased!");
+    } catch (err) {
+      console.log("Error:", err);
     }
-  }
+  };
+
+  // const getCounter = async () => {
+  //   try{
+  //     const value=await contract.x
+  //     setAmount(value)
+  //   } catch(err){
+  //     console.log("Error: ",err)
+  //   }
+  // }
+  const getX = async () => {
+    await contract.x().then((result) => setAmount(result.toString()));
+  };
+
+  useEffect(() => {
+    if (contract == undefined) return;
+    try {
+      getX();
+    } catch (err) {
+      console.log("Error: ", err);
+    }
+  }, [contract]);
 
   if (contract === undefined) return "Loading...";
   return (
@@ -44,13 +72,9 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to OZ Upgradeable Contract
-        </h1>
+        <h2>Welcome to OZ Upgradeable Contract</h2>
 
-        <div className={styles.grid}>
-          Counter: {contract.x}
-        </div>
+        <div className={styles.grid}>Counter: {amount}</div>
 
         <div className={styles.grid}>
           <button onClick={onClick}> + increase </button>
