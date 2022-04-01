@@ -3,9 +3,9 @@ import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import { ethers } from "ethers";
 
-import { contatoreAddress } from "../contatoreConfig";
+import { contatoreAddress } from "../contatoreV3Config";
 
-import Contatore from "../artifacts/contracts/Contatore.sol/Contatore.json";
+import ContatoreV3 from "../artifacts/contracts/ContatoreV3.sol/ContatoreV3.json";
 
 export default function Home() {
   const [contract, setContract] = useState();
@@ -24,7 +24,7 @@ export default function Home() {
     const signer = provider.getSigner();
     const localContract = new ethers.Contract(
       contatoreAddress,
-      Contatore.abi,
+      ContatoreV3.abi,
       signer
     );
     setContract(localContract);
@@ -41,14 +41,17 @@ export default function Home() {
     }
   };
 
-  // const getCounter = async () => {
-  //   try{
-  //     const value=await contract.x
-  //     setAmount(value)
-  //   } catch(err){
-  //     console.log("Error: ",err)
-  //   }
-  // }
+  const onClickDecrease = async () => {
+    try {
+      let transaction = await contract.decreaseValue(1);
+      await transaction.wait();
+      getX();
+      console.log("Decreased!");
+    } catch (err) {
+      console.log("Error:", err);
+    }
+  }
+
   const getX = async () => {
     await contract.x().then((result) => setAmount(result.toString()));
   };
@@ -78,6 +81,10 @@ export default function Home() {
 
         <div className={styles.grid}>
           <button onClick={onClick}> + increase </button>
+        </div>
+
+        <div className={styles.grid}>
+          <button onClick={onClickDecrease}> - decrease </button>
         </div>
       </main>
 

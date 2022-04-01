@@ -3,7 +3,7 @@ pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract ContatoreV2 is Initializable {
+contract ContatoreV3 is Initializable {
     uint256 public x;
 
     function increaseValue(uint256 _x) public {
@@ -12,6 +12,6 @@ contract ContatoreV2 is Initializable {
 
     function decreaseValue(uint256 _x) public {
         require(x >= _x);
-        x = x + _x; // Bug voluto
+        x = x - _x; // Fix bug voluto versione v2
     }
 }
